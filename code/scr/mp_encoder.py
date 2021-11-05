@@ -123,7 +123,6 @@ class Mp_encoder(nn.Module):
         z_mp = self.att(embeds)
         return z_mp
 
-
 class Mp_encoder1(nn.Module):
     def __init__(self, P, hidden_dim, attn_drop):
         super(Mp_encoder1, self).__init__()

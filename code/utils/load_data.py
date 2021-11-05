@@ -2,6 +2,19 @@ import numpy as np
 import scipy.sparse as sp
 import torch as th
 from sklearn.preprocessing import OneHotEncoder
+import torch
+
+def get_A_r(adj, r):
+    adj_label = adj.to_dense()
+    if r == 1:
+        adj_label = adj_label
+    elif r == 2:
+        adj_label = adj_label@adj_label
+    elif r == 3:
+        adj_label = adj_label@adj_label@adj_label
+    elif r == 4:
+        adj_label = adj_label@adj_label@adj_label@adj_label
+    return adj_label
 
 def encode_onehot(labels):
     labels = labels.reshape(-1, 1)
@@ -64,11 +77,20 @@ def load_acm(ratio, type_num):
     feat_s = th.FloatTensor(preprocess_features(feat_s))
     pap = sparse_mx_to_torch_sparse_tensor(normalize_adj(pap))
     psp = sparse_mx_to_torch_sparse_tensor(normalize_adj(psp))
+
+    # pap = pap.to_dense() #*newly add for tensor change
+    # psp = psp.to_dense() #*newly add for tensor change, have to be dense before change to torch
+    pap1 = get_A_r(pap, 2) #*
+    pap1 = torch.FloatTensor(pap1) #*newly add for tensor change
+    psp1 = get_A_r(psp,2)
+    psp1 = torch.FloatTensor(psp1) #*newly add for tensor change , not yet cuda
+
     pos = sparse_mx_to_torch_sparse_tensor(pos)
     train = [th.LongTensor(i) for i in train]
     val = [th.LongTensor(i) for i in val]
     test = [th.LongTensor(i) for i in test]
-    return [nei_a, nei_s], [feat_p, feat_a, feat_s], [pap, psp], pos, label, train, val, test
+    #return [nei_a, nei_s], [feat_p, feat_a, feat_s], [pap, psp], pos, label, train, val, test
+    return [nei_a, nei_s], [feat_p, feat_a, feat_s], [pap, psp], pos, label, train, val, test, pap1, psp1
 
 
 def load_dblp(ratio, type_num):

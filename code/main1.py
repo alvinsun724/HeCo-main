@@ -30,7 +30,7 @@ torch.cuda.manual_seed(seed)
 
 #[nei_a, nei_s], [feat_p, feat_a, feat_s], [pap, psp], pos, label, train, val, test  are load
 def train():
-    nei_index, feats, mps, pos, label, idx_train, idx_val, idx_test = \
+    nei_index, feats, mps, pos, label, idx_train, idx_val, idx_test, pap1, psp1 = \
         load_data(args.dataset, args.ratio, args.type_num)
     nb_classes = label.shape[-1]
     feats_dim_list = [i.shape[1] for i in feats]
@@ -47,6 +47,9 @@ def train():
         print('Using CUDA')
         model.cuda()
         feats = [feat.cuda() for feat in feats]
+        #should change mps (list) to tensor so:
+        pap1 = pap1.cuda()
+        psp1 = psp1.cuda()
         mps = [mp.cuda() for mp in mps]
         pos = pos.cuda()
         label = label.cuda()
@@ -62,7 +65,7 @@ def train():
     for epoch in range(args.nb_epochs):
         model.train()
         optimiser.zero_grad()
-        loss = model(feats, pos, mps, nei_index)   #only loss in train should be change
+        loss = model(feats, pos, mps, nei_index, pap1, psp1)   #only loss in train should be change
         print("loss ", loss.data.cpu())
         if loss < best:
             best = loss

@@ -27,10 +27,9 @@ random.seed(seed)
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 
-
 def train():
-    nei_index, feats, mps, pos, label, idx_train, idx_val, idx_test = \
-        load_data(args.dataset, args.ratio, args.type_num)
+    nei_index, feats, mps, pos, label, idx_train, idx_val, idx_test, psp1, pap1 = \
+        load_data(args.dataset, args.ratio, args.type_num)  #"""add psp1, pap1 for consistency of main1.py in load_data"""
     nb_classes = label.shape[-1]
     feats_dim_list = [i.shape[1] for i in feats]
     P = int(len(mps))
