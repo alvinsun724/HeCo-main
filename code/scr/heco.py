@@ -52,12 +52,16 @@ def get_A_r(adj, r):
 def Ncontrast(x_dis, adj_label, tau = 1):
     """
     compute the Ncontrast loss
+    adj_label:(indices=tensor([[   0,    8,   20,  ..., 3992, 4017, 4018],
+                       [   0,    0,    0,  ..., 4017, 4017, 4018]]),
+       values=tensor([0.0500, 0.0477, 0.0500,  ..., 0.5000, 0.5000, 1.0000]),
+       device='cuda:0', size=(4019, 4019), nnz=57853, layout=torch.sparse_coo);
     """
-    x_dis = torch.exp(tau * x_dis)
-    x_dis_sum = torch.sum(x_dis, 1)
-    #x_dis_sum_pos = torch.sum(x_dis*adj_label, 1) #  only integer tensors of a single element can be converted to an index
-    loss = -torch.log(x_dis_sum* (x_dis_sum**(-1))+1e-8).mean()
-    #loss = -torch.log(x_dis_sum_pos * (x_dis_sum**(-1))+1e-8).mean()
+    x_dis = torch.exp(tau * x_dis) #x_dis tensor(4019, 4019)
+    x_dis_sum = torch.sum(x_dis, 1) #x_dis_sum tensor 4019 , sum for row of x_dis
+    x_dis_sum_pos = torch.sum(x_dis*adj_label, 1) #  only integer tensors of a single element can be converted to an index
+    #loss = -torch.log(x_dis_sum* (x_dis_sum**(-1))+1e-8).mean()
+    loss = -torch.log(x_dis_sum_pos * (x_dis_sum**(-1))+1e-8).mean()
     return loss
 
 class HeCo1(nn.Module):

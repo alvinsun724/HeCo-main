@@ -1,6 +1,7 @@
 import numpy
 import torch
 from utils import load_data, set_params, evaluate
+from utils.params import set_params1
 from scr.heco import HeCo1
 import warnings
 import datetime
@@ -9,7 +10,8 @@ import os
 import random
 
 warnings.filterwarnings('ignore')
-args = set_params()
+#args = set_params()
+args = set_params1()
 if torch.cuda.is_available():
     device = torch.device("cuda:" + str(args.gpu))
     torch.cuda.set_device(args.gpu)

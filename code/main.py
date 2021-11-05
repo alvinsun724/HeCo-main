@@ -94,6 +94,5 @@ def train():
         pkl.dump(embeds.cpu().data.numpy(), f)
         f.close()
 
-
 if __name__ == '__main__':
     train()
