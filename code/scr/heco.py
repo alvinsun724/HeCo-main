@@ -33,9 +33,24 @@ class HeCo(nn.Module):
         return loss
 
     def get_embeds(self, feats, mps):
-        z_mp = F.elu(self.fc_list[0](feats[0]))
-        z_mp = self.mp(z_mp, mps)
+        z_mp = F.elu(self.fc_list[0](feats[0])) #(tensor 4019 64)
+        z_mp = self.mp(z_mp, mps) #still tensor, size(4019, 64)
         return z_mp.detach()
+    """ z_mp
+    tensor([[ 7.7013e-03,  2.9199e-02, -3.6545e-03,  ...,  5.5609e-04,
+          2.0036e-03,  3.2273e-03],
+        [ 8.8949e-03,  1.8000e-02, -4.3281e-03,  ...,  5.4888e-04,
+         -1.2751e-04, -2.4399e-03],
+        [ 2.1736e-02,  3.6141e-02, -5.3750e-03,  ...,  5.3952e-03,
+         -2.4528e-03, -1.3821e-03],
+        ...,
+        [ 3.7299e-03,  1.7125e-02, -3.4562e-03,  ..., -1.1136e-04,
+          3.2408e-03,  1.3651e-03],
+        [ 1.1550e-03,  1.5562e-02,  3.5291e-04,  ...,  1.5265e-02,
+          2.9429e-03, -8.7831e-04],
+        [ 8.1156e-03,  6.5173e-03, -3.4263e-05,  ...,  2.0440e-02,
+          7.8687e-03, -4.5654e-03]], device='cuda:0', grad_fn=<AddBackward0>)
+    """
 
 def get_A_r(adj, r):
     adj_label = adj  #delete to_dense() as  'list' object has no attribute 'to_dense'
@@ -98,7 +113,10 @@ class HeCo1(nn.Module):
     def get_embeds(self, feats, mps):
         z_mp = F.elu(self.fc_list[0](feats[0])) #tensor (4019, 64) cuda grad_fn=<EluBackward0>
         z_mp = self.mp(z_mp, mps) #become tuple
-        return z_mp.detach()   #tuple object no attribute detach
+        y1 = z_mp[0]   #(4019,64)
+        y2 = z_mp[1]   #(4019, 4019)
+        return y1.detach()
+        #return z_mp.detach()   #tuple object no attribute detach
     #tuple:(tensor([[ 0.0640, -1.4158,  0.9754,  ..., -2.2123,  2.1256, -1.5471],
 """ [ 1.6061,  0.3109, -0.6716,  ..., -1.0086,  0.6214,  1.4109],
         [ 1.5515,  1.5116, -0.3424,  ..., -0.5252,  0.2007,  2.0800],
